@@ -48,7 +48,7 @@ export function PriorityList({ clients, loading }: PriorityListProps) {
   return (
     <div className="space-y-3">
       {clients.map((c) => {
-        const top = c.triggers[0];
+        const top = c.triggers?.[0];
         return (
           <ActionCard
             key={c.client_id}

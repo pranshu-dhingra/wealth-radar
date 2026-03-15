@@ -38,7 +38,23 @@ export default function DashboardPage() {
         ? JSON.parse(resultEvent.data)
         : resultEvent.data as DailyScanResult;
       if (raw && Array.isArray(raw.top_clients)) {
-        const sorted = [...raw.top_clients as TriggerScanResult[]].sort(
+        // Normalize backend shape → frontend TriggerScanResult:
+        // - filter out error dicts (no triggers array)
+        // - backend uses "final_priority", frontend expects "priority_score"
+        // - backend trigger items use "type" key, frontend expects "trigger_type"
+        const normalized = (raw.top_clients as Record<string, unknown>[])
+          .filter((c) => !c.error && Array.isArray(c.triggers))
+          .map((c) => ({
+            ...c,
+            priority_score: (c.priority_score ?? c.final_priority ?? 0) as number,
+            triggers: (c.triggers as Record<string, unknown>[]).map((t) => ({
+              ...t,
+              trigger_type: (t.trigger_type ?? t.type ?? "REVIEW") as string,
+              description: (t.description ?? t.details ?? "") as string,
+              urgency: (t.urgency ?? t.base_urgency ?? 0) as number,
+            })),
+          }));
+        const sorted = [...normalized as unknown as TriggerScanResult[]].sort(
           (a, b) => b.priority_score - a.priority_score,
         );
         setPriorityClients(sorted);
