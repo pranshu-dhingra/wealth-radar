@@ -46,6 +46,7 @@ app.add_middleware(
         f"http://localhost:{settings.FRONTEND_PORT}",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://wealth-radar.pranshudhingra.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
