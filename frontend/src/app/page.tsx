@@ -31,7 +31,7 @@ export default function DashboardPage() {
 
   // Extract result from SSE scan events
   useEffect(() => {
-    const resultEvent = events.findLast((e) => e.type === "result");
+    const resultEvent = [...events].reverse().find((e) => e.type === "result");
     if (!resultEvent) return;
     try {
       const raw = typeof resultEvent.data === "string"

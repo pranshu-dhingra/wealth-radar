@@ -530,7 +530,7 @@ function ActionsTab({ clientId }: { clientId: string }) {
   }
 
   // Extract result content from SSE events
-  const resultEvent = events.findLast((e) => e.type === "result");
+  const resultEvent = [...events].reverse().find((e) => e.type === "result");
   const generatedContent = (() => {
     if (!resultEvent) return null;
     try {

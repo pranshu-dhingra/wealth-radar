@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Bell, Zap, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { streamAgentSSE } from "@/lib/api";
 import type { AgentEvent } from "@/lib/types";
 
@@ -13,7 +12,6 @@ interface HeaderProps {
 export function Header({ title }: HeaderProps) {
   const [scanning, setScanning] = useState(false);
   const [done, setDone] = useState(false);
-  const router = useRouter();
 
   function handleDailyScan() {
     if (scanning) return;
@@ -24,7 +22,7 @@ export function Header({ title }: HeaderProps) {
       "/api/agents/daily-scan",
       { top_n: 10 },
       (_event: AgentEvent) => { /* streamed to agent panel */ },
-      () => { setScanning(false); setDone(true); stop(); router.refresh(); },
+      () => { setScanning(false); setDone(true); },
       () => { setScanning(false); stop(); },
     );
   }
