@@ -23,7 +23,8 @@ if command -v dnf &>/dev/null; then
   # Amazon Linux 2023
   sudo dnf update -y
   sudo dnf install -y python3.11 python3.11-pip python3.11-devel git nginx
-  sudo ln -sf /usr/bin/python3.11 /usr/bin/python3
+  # NOTE: do NOT override /usr/bin/python3 — dnf depends on system Python 3.9
+  # Use python3.11 explicitly for all project commands
 else
   # Ubuntu 22.04
   sudo apt-get update -y
@@ -53,7 +54,7 @@ fi
 
 echo "====== [4/8] Python virtual environment & dependencies ======"
 cd /home/ec2-user/wealth-radar/backend
-python3.11 -m venv .venv
+/usr/bin/python3.11 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
