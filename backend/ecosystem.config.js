@@ -12,7 +12,7 @@ module.exports = {
       // Auto-restart on crash
       autorestart: true,
       watch: false,
-      max_memory_restart: "1G",
+      max_memory_restart: "700M",
       // Logging
       out_file: "/home/ec2-user/logs/api-out.log",
       error_file: "/home/ec2-user/logs/api-error.log",

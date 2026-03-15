@@ -6,6 +6,18 @@
 # =============================================================================
 set -e
 
+echo "====== [0/8] Add 2GB swap (essential for t3.micro 1GB RAM) ======"
+if [ ! -f /swapfile ]; then
+  sudo dd if=/dev/zero of=/swapfile bs=128M count=16   # 2GB
+  sudo chmod 600 /swapfile
+  sudo mkswap /swapfile
+  sudo swapon /swapfile
+  echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
+  echo "Swap enabled: $(free -h | grep Swap)"
+else
+  echo "Swap already configured — skipping"
+fi
+
 echo "====== [1/8] System update & dependencies ======"
 if command -v dnf &>/dev/null; then
   # Amazon Linux 2023
