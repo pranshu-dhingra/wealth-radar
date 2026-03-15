@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdvisorLink — Client Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 24px;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #1e293b; padding-bottom: 16px; margin-bottom: 24px;
+    }
+    header h1 { font-size: 18px; color: #00D4B4; }
+    header span { font-size: 13px; color: #64748b; }
+    .card {
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 10px; padding: 20px; margin-bottom: 16px;
+    }
+    .card h2 { font-size: 13px; color: #64748b; text-transform: uppercase;
+               letter-spacing: 0.05em; margin-bottom: 12px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .stat label { font-size: 12px; color: #64748b; }
+    .stat .val  { font-size: 20px; font-weight: 700; color: #f1f5f9; margin-top: 2px; }
+    .stat .val.positive { color: #34d399; }
+    .stat .val.negative { color: #f87171; }
+    .stat .val.warning  { color: #fbbf24; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: #64748b; font-weight: 600;
+         padding: 8px 12px; border-bottom: 1px solid #334155; }
+    td { padding: 10px 12px; border-bottom: 1px solid #1e293b; }
+    td.pos { color: #34d399; } td.neg { color: #f87171; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge.red    { background: #7f1d1d; color: #fca5a5; }
+    .badge.yellow { background: #713f12; color: #fde68a; }
+    .badge.green  { background: #064e3b; color: #6ee7b7; }
+    .alerts li { padding: 8px 0; border-bottom: 1px solid #1e293b;
+                 font-size: 13px; display: flex; align-items: flex-start; gap: 10px; }
+    .alerts li:last-child { border-bottom: none; }
+    nav { display: flex; gap: 8px; margin-bottom: 20px; }
+    nav a {
+      padding: 6px 16px; border-radius: 6px; font-size: 13px;
+      color: #94a3b8; text-decoration: none; background: #1e293b;
+      border: 1px solid #334155;
+    }
+    nav a.active { background: #00D4B4; color: #0f172a; border-color: #00D4B4; font-weight: 600; }
+    #client-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    #client-meta { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>AdvisorLink Custodian Portal</h1>
+  <span id="logged-in">Logged in as: <strong>demo@advisorfirm.com</strong></span>
+</header>
+
+<nav>
+  <a href="#" class="active" id="nav-overview">Overview</a>
+  <a href="#" id="nav-holdings">Holdings</a>
+  <a href="#" id="nav-transactions">Transactions</a>
+  <a href="#" id="nav-documents">Documents</a>
+</nav>
+
+<div id="client-name">Loading…</div>
+<div id="client-meta"></div>
+
+<!-- Summary stats -->
+<div class="card" id="section-overview">
+  <h2>Account Summary</h2>
+  <div class="stat-grid" id="stats-grid"></div>
+</div>
+
+<!-- Alerts -->
+<div class="card">
+  <h2>Active Alerts</h2>
+  <ul class="alerts" id="alerts-list"></ul>
+</div>
+
+<!-- Holdings table (hidden initially) -->
+<div class="card" id="section-holdings" style="display:none">
+  <h2>Current Holdings</h2>
+  <table id="holdings-table">
+    <thead>
+      <tr>
+        <th>Ticker</th><th>Name</th><th>Asset Class</th>
+        <th>Shares</th><th>Price</th><th>Value</th><th>Gain/Loss</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Data anchor used by Nova Act for structured extraction -->
+<div id="portal-data" style="display:none"></div>
+
+<script>
+  // Client data store keyed by client_id
+  const CLIENTS = {
+    CLT001: {
+      name: "Mark Johnson", tier: "A", aum: 1558151.71, age: 77,
+      occupation: "Retired", tax_bracket: "22%",
+      last_meeting: "2026-02-08",
+      accounts: [
+        { id: "CLT001-TRADIT-1", type: "Traditional IRA", institution: "Morgan Stanley", balance: 644583.11 },
+        { id: "CLT001-TRUST_-2", type: "Trust Account",   institution: "Morgan Stanley", balance: 358997.70 },
+        { id: "CLT001-JOINT_-3", type: "Joint Brokerage", institution: "Raymond James",  balance: 236043.01 },
+        { id: "CLT001-ROTH_I-4", type: "Roth IRA",        institution: "Vanguard",        balance: 182902.30 },
+      ],
+      alerts: [
+        { severity: "red",    text: "RMD DUE: 2026 RMD of ~$28,148 not yet distributed (deadline Dec 31 2026)" },
+        { severity: "yellow", text: "QCD AVAILABLE: Up to $111,000 may be donated directly from IRA tax-free" },
+        { severity: "yellow", text: "BENEFICIARY REVIEW: Joint Brokerage account last reviewed Feb 2023" },
+      ],
+      holdings: [
+        { ticker:"VTI",  name:"Vanguard Total Stock Market ETF", asset_class:"US_EQUITY",  shares:553.34, price:285.40, value:157922.86, gl:58727.76 },
+        { ticker:"VXUS", name:"Vanguard Total Intl Stock ETF",   asset_class:"INTL_EQUITY", shares:930.73, price:65.10,  value:60590.81,  gl:12915.24 },
+        { ticker:"BND",  name:"Vanguard Total Bond Market ETF",  asset_class:"US_BOND",     shares:2325.35,price:73.80,  value:171611.00, gl:46871.37 },
+        { ticker:"GLD",  name:"SPDR Gold Shares ETF",            asset_class:"COMMODITIES", shares:98.22,  price:215.56, value:21172.46,  gl:3205.80 },
+        { ticker:"VNQ",  name:"Vanguard Real Estate ETF",        asset_class:"REAL_ESTATE", shares:244.11, price:88.30,  value:21554.91,  gl:2981.15 },
+      ]
+    },
+    CLT002: {
+      name: "Julia Nelson", tier: "A", aum: 1878460.70, age: 74,
+      occupation: "Retired Executive", tax_bracket: "22%",
+      last_meeting: "2025-11-20",
+      accounts: [
+        { id: "CLT002-TRADIT-1", type: "Traditional IRA", institution: "Fidelity",       balance: 892340.00 },
+        { id: "CLT002-ROTH_I-2", type: "Roth IRA",        institution: "Fidelity",       balance: 341200.50 },
+        { id: "CLT002-JOINT_-3", type: "Joint Brokerage", institution: "Charles Schwab", balance: 644920.20 },
+      ],
+      alerts: [
+        { severity: "red",    text: "PORTFOLIO DRIFT: US Equity overweight by 7.2% (target 40%, current 47.2%)" },
+        { severity: "red",    text: "RMD DUE: 2026 RMD not yet taken — Traditional IRA balance $892,340" },
+        { severity: "yellow", text: "MEETING OVERDUE: Last meeting Nov 2025 (110 days ago — Tier A target 91 days)" },
+      ],
+      holdings: [
+        { ticker:"VTI",  name:"Vanguard Total Stock Market ETF", asset_class:"US_EQUITY",  shares:1240.50,price:285.40,value:354022.70,gl:112400.00 },
+        { ticker:"QQQ",  name:"Invesco QQQ Trust",               asset_class:"US_EQUITY",  shares:210.80, price:470.20,value:99099.16, gl:41200.00 },
+        { ticker:"AGG",  name:"iShares Core US Aggregate Bond",  asset_class:"US_BOND",     shares:1850.00,price:97.40, value:180190.00,gl:22100.00 },
+        { ticker:"VXUS", name:"Vanguard Total Intl Stock ETF",   asset_class:"INTL_EQUITY", shares:1900.00,price:65.10, value:123690.00,gl:18400.00 },
+      ]
+    },
+  };
+
+  const DEFAULT_CLIENT = {
+    name: "Unknown Client", tier: "C", aum: 0, age: 0,
+    occupation: "Unknown", tax_bracket: "N/A",
+    last_meeting: "N/A",
+    accounts: [], alerts: [], holdings: []
+  };
+
+  function fmt(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+  function load() {
+    const params = new URLSearchParams(window.location.search);
+    const cid    = params.get('client') || 'CLT001';
+    const client = CLIENTS[cid] || DEFAULT_CLIENT;
+
+    document.getElementById('client-name').textContent = client.name;
+    document.getElementById('client-meta').textContent =
+      `Client ID: ${cid}  |  Tier ${client.tier}  |  Age ${client.age}  |  ${client.occupation}  |  Last meeting: ${client.last_meeting}`;
+
+    // Stats
+    const totalBalance = client.accounts.reduce((s, a) => s + a.balance, 0);
+    const statsGrid = document.getElementById('stats-grid');
+    statsGrid.innerHTML = `
+      <div class="stat"><label>Total AUM</label><div class="val">${fmt(totalBalance)}</div></div>
+      <div class="stat"><label>Accounts</label><div class="val">${client.accounts.length}</div></div>
+      <div class="stat"><label>Active Alerts</label><div class="val warning">${client.alerts.length}</div></div>
+      <div class="stat"><label>Tier</label><div class="val">${client.tier}</div></div>
+      <div class="stat"><label>Tax Bracket</label><div class="val">${client.tax_bracket}</div></div>
+      <div class="stat"><label>Age</label><div class="val">${client.age}</div></div>
+    `;
+
+    // Alerts
+    const alertsList = document.getElementById('alerts-list');
+    alertsList.innerHTML = client.alerts.map(a =>
+      `<li><span class="badge ${a.severity}">${a.severity.toUpperCase()}</span> ${a.text}</li>`
+    ).join('');
+
+    // Holdings table
+    const tbody = document.querySelector('#holdings-table tbody');
+    tbody.innerHTML = client.holdings.map(h => `
+      <tr>
+        <td><strong>${h.ticker}</strong></td>
+        <td>${h.name}</td>
+        <td>${h.asset_class}</td>
+        <td>${h.shares.toLocaleString()}</td>
+        <td>$${h.price.toFixed(2)}</td>
+        <td>${fmt(h.value)}</td>
+        <td class="${h.gl >= 0 ? 'pos' : 'neg'}">${h.gl >= 0 ? '+' : ''}${fmt(h.gl)}</td>
+      </tr>
+    `).join('');
+
+    // Structured data anchor for Nova Act extraction
+    const portalData = {
+      client_id: cid,
+      client_name: client.name,
+      tier: client.tier,
+      total_aum: totalBalance,
+      account_count: client.accounts.length,
+      alert_count: client.alerts.length,
+      alerts: client.alerts.map(a => ({severity: a.severity, text: a.text})),
+      accounts: client.accounts,
+      holdings: client.holdings,
+      last_meeting: client.last_meeting,
+    };
+    document.getElementById('portal-data').textContent = JSON.stringify(portalData, null, 2);
+    document.getElementById('portal-data').setAttribute('data-client-id', cid);
+    document.getElementById('portal-data').setAttribute('data-total-aum', totalBalance);
+    document.getElementById('portal-data').setAttribute('data-alert-count', client.alerts.length);
+
+    // Nav toggle
+    document.getElementById('nav-holdings').addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('section-holdings').style.display = 'block';
+      document.getElementById('section-overview').style.display = 'none';
+    });
+    document.getElementById('nav-overview').addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('section-holdings').style.display = 'none';
+      document.getElementById('section-overview').style.display = 'block';
+    });
+  }
+
+  load();
+</script>
+</body>
+</html>

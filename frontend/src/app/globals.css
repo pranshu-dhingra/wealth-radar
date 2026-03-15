@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 220 26% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 26% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 171 100% 42%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 171 100% 42%;
+    --radius: 0.5rem;
+
+    /* WealthRadar semantic status colours */
+    --radar-green:  #00F0C8;   /* healthy / positive */
+    --radar-yellow: #FFB832;   /* monitor / warning  */
+    --radar-red:    #FF4B4B;   /* action required    */
+    --radar-blue:   #3290FF;   /* info               */
+    --radar-teal:   #00D4B4;   /* brand accent       */
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground antialiased; }
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
+}
+
+/* Radar glow effect for the accent */
+@layer utilities {
+  .glow-teal {
+    box-shadow: 0 0 12px 2px rgba(0, 212, 180, 0.25);
+  }
+  .glow-teal-sm {
+    box-shadow: 0 0 6px 1px rgba(0, 212, 180, 0.18);
+  }
+  .text-radar-green  { color: var(--radar-green); }
+  .text-radar-yellow { color: var(--radar-yellow); }
+  .text-radar-red    { color: var(--radar-red); }
+  .text-radar-blue   { color: var(--radar-blue); }
+  .text-radar-teal   { color: var(--radar-teal); }
+  .bg-radar-green    { background-color: var(--radar-green); }
+  .bg-radar-yellow   { background-color: var(--radar-yellow); }
+  .bg-radar-red      { background-color: var(--radar-red); }
+  .border-radar-teal { border-color: var(--radar-teal); }
+}
+
+/* Focus ring — applied to all interactive elements for keyboard accessibility */
+@layer base {
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--radar-teal);
+    outline-offset: 2px;
+  }
+}
+
+/* Pulsing dot for notification badge */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.85); }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Smooth page transitions */
+@layer base {
+  main { animation: fadeIn 0.15s ease-out; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}

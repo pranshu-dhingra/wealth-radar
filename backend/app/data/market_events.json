@@ -1,0 +1,136 @@
+[
+  {
+    "id": "EVT001",
+    "date": "2026-02-18",
+    "event_type": "FED_RATE_DECISION",
+    "title": "Fed Holds at 4.50% \u2014 Signals Two Cuts in H2 2026",
+    "description": "The Federal Reserve voted unanimously to hold the federal funds rate at 4.25%\u20134.50%. Chair signaled two 25bp cuts likely in H2 2026. Bond markets rallied on the news: BND +0.4%, TIP +0.3%, VGSH +0.8%. REIT sector gained 1.2% on lower rate expectations.",
+    "severity": "MEDIUM",
+    "affected_sectors": [
+      "US_BOND",
+      "INTL_BOND",
+      "REAL_ESTATE"
+    ],
+    "affected_tickers": [
+      "BND",
+      "AGG",
+      "TIP",
+      "VTIP",
+      "BNDX",
+      "VNQ"
+    ],
+    "recommended_action": "Review bond duration positioning for conservative/moderate clients. Roth conversion window may narrow if rate cuts push equities higher \u2014 accelerate conversions for ROTH_WINDOW clients now.",
+    "trigger_types": [
+      "ROTH_WINDOW",
+      "PORTFOLIO_DRIFT"
+    ]
+  },
+  {
+    "id": "EVT002",
+    "date": "2026-02-28",
+    "event_type": "EQUITY_MARKET_CORRECTION",
+    "title": "S&P 500 -7.3% in Three Sessions \u2014 AI Valuation Reset",
+    "description": "S&P 500 declined 7.3% over three sessions on AI chipmaker guidance cuts. QQQ fell 11.2%, IWM -4.1%, VTI -6.8%. Value and dividend stocks partially offset losses: SCHD -1.9%, VIG -2.4%. International equities outperformed on dollar weakness: VXUS -3.2%, VEA -2.8%.",
+    "severity": "HIGH",
+    "affected_sectors": [
+      "US_EQUITY",
+      "INTL_EQUITY"
+    ],
+    "affected_tickers": [
+      "VTI",
+      "QQQ",
+      "IWM",
+      "VO",
+      "VB",
+      "VXUS",
+      "IEMG",
+      "VWO"
+    ],
+    "recommended_action": "Scan all taxable accounts for tax-loss harvesting \u2014 QQQ, IWM, VB are primary candidates. Review drift for growth/aggressive profiles. Accelerate Roth conversions for eligible clients at lower account values.",
+    "trigger_types": [
+      "TLH_OPPORTUNITY",
+      "PORTFOLIO_DRIFT",
+      "ROTH_WINDOW"
+    ]
+  },
+  {
+    "id": "EVT003",
+    "date": "2026-03-03",
+    "event_type": "INFLATION_DATA",
+    "title": "CPI 3.2% \u2014 Core Inflation Surprises to Upside",
+    "description": "February CPI rose 3.2% YoY vs. 2.9% consensus. Core CPI ex-food/energy +3.6%. TIPS and VTIP rallied: TIP +0.9%, VTIP +0.6%. The 10-year Treasury yield spiked 18bp to 4.68%. Fixed income broadly sold off: BND -0.9%, AGG -1.0%, LQD -1.3%, BNDX -0.7%.",
+    "severity": "HIGH",
+    "affected_sectors": [
+      "US_BOND",
+      "INTL_BOND",
+      "COMMODITIES"
+    ],
+    "affected_tickers": [
+      "BND",
+      "AGG",
+      "LQD",
+      "BNDX",
+      "TIP",
+      "VTIP",
+      "GLD",
+      "IAU"
+    ],
+    "recommended_action": "Review TIPS/VTIP weighting for conservative clients \u2014 underweight inflation-protection is now a meaningful drag. Flag commodity allocation as inflation hedge. Re-evaluate near-term bond buys for clients with pending liquidity events (e.g. RMD proceeds).",
+    "trigger_types": [
+      "PORTFOLIO_DRIFT",
+      "RMD_DUE",
+      "MARKET_EVENT"
+    ]
+  },
+  {
+    "id": "EVT004",
+    "date": "2026-03-05",
+    "event_type": "CURRENCY_MOVE",
+    "title": "Dollar Weakens 3.1% \u2014 DXY Falls to 102.4",
+    "description": "US Dollar Index fell 3.1% on fiscal deficit concerns and hot CPI print. International equity positions received a currency tailwind: VXUS +2.8%, VEA +3.1%, IEMG +2.2%. Unhedged international bonds (BNDX) gained +1.6%. Dollar weakness also boosted commodity prices: GLD +1.4%.",
+    "severity": "LOW",
+    "affected_sectors": [
+      "INTL_EQUITY",
+      "INTL_BOND",
+      "COMMODITIES"
+    ],
+    "affected_tickers": [
+      "VXUS",
+      "VEA",
+      "IEMG",
+      "VWO",
+      "BNDX",
+      "VNQI",
+      "GLD"
+    ],
+    "recommended_action": "Flag international equity rebalancing for clients underweight INTL_EQUITY \u2014 tailwind may reverse. Positive for clients already overweight international. Review rebalancing trigger thresholds.",
+    "trigger_types": [
+      "PORTFOLIO_DRIFT"
+    ]
+  },
+  {
+    "id": "EVT005",
+    "date": "2026-03-07",
+    "event_type": "GEOPOLITICAL_RISK",
+    "title": "Oil +8% on Strait of Hormuz Supply Disruption",
+    "description": "Crude oil rose 8.2% to $89/barrel on reported supply disruptions. GLD rose 2.1% to $225/oz; IAU +2.0%. Energy-cost concerns hit REITs: VNQ -1.4%, VNQI -1.8%. Commodity positions outperformed broadly: PDBC +3.8%.",
+    "severity": "MEDIUM",
+    "affected_sectors": [
+      "COMMODITIES",
+      "REAL_ESTATE"
+    ],
+    "affected_tickers": [
+      "GLD",
+      "IAU",
+      "PDBC",
+      "VNQ",
+      "VNQI"
+    ],
+    "recommended_action": "Review commodity allocation for clients underweight GLD/IAU \u2014 recent rally highlights inflation-hedge gap. Re-examine REIT positions for income-focused clients given energy-cost headwinds. Flag inflation-hedge conversation for clients in or approaching retirement.",
+    "trigger_types": [
+      "PORTFOLIO_DRIFT",
+      "MARKET_EVENT",
+      "QCD_OPPORTUNITY"
+    ]
+  }
+]
