@@ -195,9 +195,7 @@ export default function SearchPage() {
           <AlertCircle className="w-4 h-4 text-[var(--radar-red)] shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-[var(--radar-red)]">Search unavailable</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Backend not connected. Start the FastAPI server to enable semantic search.
-            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">{error}</p>
           </div>
         </div>
       )}
