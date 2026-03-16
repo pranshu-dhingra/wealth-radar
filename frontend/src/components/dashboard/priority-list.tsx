@@ -59,7 +59,7 @@ export function PriorityList({ clients, loading }: PriorityListProps) {
             description={top?.description ?? "Multiple triggers detected"}
             priorityScore={c.priority_score}
             aum={c.aum}
-            triggerCount={c.triggers.length}
+            triggerCount={(c.triggers ?? []).length}
             onClick={() => router.push(`/clients/${c.client_id}`)}
           />
         );

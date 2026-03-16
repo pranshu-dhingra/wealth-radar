@@ -58,7 +58,17 @@ export default function DashboardPage() {
           (a, b) => b.priority_score - a.priority_score,
         );
         setPriorityClients(sorted);
-        setScanResult(raw as DailyScanResult);
+        // Normalize cohort_patterns: backend returns list[dict], frontend expects string[]
+        const rawPatterns = Array.isArray(raw.cohort_patterns) ? raw.cohort_patterns : [];
+        const normalizedPatterns: string[] = rawPatterns.map((p: unknown) => {
+          if (typeof p === "string") return p;
+          if (p && typeof p === "object") {
+            const pat = p as Record<string, unknown>;
+            return String(pat.description ?? pat.recommended_action ?? pat.pattern_name ?? pat.pattern_type ?? JSON.stringify(p));
+          }
+          return String(p);
+        });
+        setScanResult({ ...(raw as DailyScanResult), cohort_patterns: normalizedPatterns });
       }
     } catch { /* malformed — ignore */ }
   }, [events]);
@@ -103,7 +113,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-foreground">Morning Briefing</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5" suppressHydrationWarning>
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
         </div>
